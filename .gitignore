@@ -1,1 +1,5 @@
-data/
+data-latest*
+*.tsv
+raw/
+*.Rproj
+.Rproj.user
