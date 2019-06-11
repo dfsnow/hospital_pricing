@@ -1,5 +1,4 @@
-data-latest*
+pgloader/
 *.tsv
-raw/
 *.Rproj
 .Rproj.user
