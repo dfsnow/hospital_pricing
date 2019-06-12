@@ -1,5 +1,7 @@
 .env
 pgloader/
+raw/
+data-latest*
 *.tsv
 *.Rproj
 .Rproj.user
