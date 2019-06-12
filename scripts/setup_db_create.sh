@@ -4,6 +4,7 @@ sudo -u postgres createdb "$db_name" -O snow
 sudo -u postgres psql -d "$db_name" << EOD
 
     CREATE EXTENSION postgis;
+    CREATE EXTENSION pg_trgm;
     CREATE EXTENSION fuzzystrmatch;
 
     SET CLIENT_ENCODING TO UTF8;

@@ -1,0 +1,11 @@
+version: '3.0'
+services:
+  node_basic:
+    container_name: price_mapper_backend
+    image: gmoralesc/node_basic
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules

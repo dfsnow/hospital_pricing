@@ -1,0 +1,17 @@
+{
+  "name": "price-mapper-backend",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "description": "PostGIS Node API",
+  "author": "Dan Snow",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "~4.16.0",
+    "pg": "*",
+    "dotenv": "*"
+  }
+}
