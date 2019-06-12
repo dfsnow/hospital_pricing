@@ -1,0 +1,13 @@
+LOAD CSV
+    FROM '/data/data-latest-all.csv' (
+        price, description, hospital_id, filename, charge_type)
+    INTO postgresql://user:password@lab.dfsnow.me:5432/hospitals TARGET TABLE prices (
+        price, description, hospital_id, filename, charge_type)
+
+    WITH truncate,
+        skip header = 1,
+        fields optionally enclosed by '"',
+        fields escaped by double-quote,
+        fields terminated by '|';
+
+
