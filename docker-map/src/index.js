@@ -74,6 +74,7 @@ class Application extends React.Component {
 
       cur_lon = e.lngLat.lng;
       cur_lat = e.lngLat.lat;
+
     };
 
     // Rerun query on click
@@ -82,8 +83,8 @@ class Application extends React.Component {
     // Run query on search
     document.querySelector("#searchBarForm")
       .addEventListener("submit", function(){
-        var e = {"lngLat": ["lng": cur_lon, "lat": cur_lat]}
-        queryDatabase(e)
+        var e = {"lngLat": {lng: cur_lon, lat: cur_lat}};
+        queryDatabase(e);
       });
 
   };

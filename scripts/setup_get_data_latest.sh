@@ -12,6 +12,7 @@ awk 'FNR==1 && NR!=1{next;}{print}' $(ls $proj_dir/raw/*/data-latest.tsv) | \
       print
     }' | \
     cut -d\| -f1 --complement | \
-    tr -d '$' | \
+    tr -d '$' | tr -d '"' | \
+    sed '/^[[:digit:]]/!d' | \
     sed '/[[:digit:]]/ {s/,//g}' > \
     $proj_dir/data/data-latest-all.csv
