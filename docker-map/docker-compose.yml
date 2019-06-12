@@ -5,7 +5,7 @@ services:
     image: gmoralesc/node_basic
     build: .
     ports:
-      - 8000:8000
+      - 8020:8020
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules

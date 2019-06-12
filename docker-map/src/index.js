@@ -2,9 +2,10 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import mapboxgl from 'mapbox-gl'
 import axios from 'axios'
-require('dotenv').config()
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
+const API_URL = process.env.REACT_APP_API_URL
 
 class Application extends React.Component {
 
@@ -19,7 +20,6 @@ class Application extends React.Component {
 
   componentDidMount() {
     const { lng, lat, zoom } = this.state;
-    console.log(process.env.REACT_APP_MAPBOX_TOKEN);
     const map = new mapboxgl.Map({
       container: this.mapContainer,
       style: 'mapbox://styles/mapbox/light-v10?optimize=true',
@@ -27,111 +27,74 @@ class Application extends React.Component {
       zoom
     });
 
-    map.on('move', () => {
-      const { lng, lat } = map.getCenter();
+    map.getCanvas().style.cursor = 'pointer';
+    var cur_lon = this.state.lng;
+    var cur_lat = this.state.lat;
 
-      this.setState({
-        lng: lng.toFixed(4),
-        lat: lat.toFixed(4),
-        zoom: map.getZoom().toFixed(2)
+    var queryDatabase = async function(e) {
+      let searchValue = document.getElementById("searchBarInput").value;
+      const hospitals = await axios.get(`${API_URL}/hospitals`, {
+        params: {
+          lon: e.lngLat.lng,
+          lat: e.lngLat.lat,
+          search: searchValue
+        }
       });
-    });
 
-    //map.on('load', async () => {
-      //map.addSource('greenspace_tiles', {
-        //type: 'vector',
-        //url: 'mapbox://kyliepace.cjv9ipamn0l8l2xoecwrwier2-6lbjl'
-      //});
+      const features = hospitals.data.map(datum => {
+        let feat = datum.properties
+        return {
+          type: 'Feature',
+          properties: {
+            title: feat.hospital_name,
+            description: feat.description,
+            price: feat.price
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [feat.lon, feat.lat]
+          }
+        }
+      });
 
-      //map.addLayer({
-        //id: 'greenspaces',
-        //type: 'fill',
-        //source: 'greenspace_tiles',
-        //'source-layer': 'bath-greenspaces',
-        //paint: {
-          //"fill-color": "#888888",
-          //"fill-outline-color": "black",
-          //"fill-opacity": 0.7
-        //}
-      //});
-    //});
+      document.querySelectorAll('.mapboxgl-popup').forEach(function(a) {
+        a.remove()
+      });
 
+      features.forEach(function(popup) {
+        // make a popup for each feature and add to the map
+        new mapboxgl.Popup({closeOnClick: false})
+            .setLngLat(popup.geometry.coordinates)
+            .setHTML(`
+                <h2>${popup.properties.title}</h2>
+                <h4>Type: ${popup.properties.description}</h4>
+                <h4>Price: $${popup.properties.price}</h4>`)
+            .addTo(map);
+      });
 
-    //map.on('click', 'greenspaces', async e => {
-      //// send e.lngLat to server
-      //this.state.crime = {}
-      //const crime = await axios.get(`${process.env.REACT_APP_API_URL}/api/crime`, {
-        //params: {
-          //point: e.lngLat
-        //}
-      //});
+      cur_lon = e.lngLat.lng;
+      cur_lat = e.lngLat.lat;
+    };
 
-      //console.log(crime.data)
+    // Rerun query on click
+    map.on('click', queryDatabase)
 
-      //const features = crime.data.map(datum => {
-        //const cat = datum.category;
-        //if (!this.state.crimes[cat]){
-          //this.state.crimes[cat] = 1;
-        //}
-        //else {
-          //this.state.crimes[cat] ++
-        //}
-        //return {
-          //type: 'Feature',
-          //properties: {
-            //category: cat,
-            //title: 'crime point',
-            //icon: 'point'
-          //},
-          //geometry: datum.point
-        //}
-      //});
+    // Run query on search
+    document.querySelector("#searchBarForm")
+      .addEventListener("submit", function(){
+        var e = {"lngLat": ["lng": cur_lon, "lat": cur_lat]}
+        queryDatabase(e)
+      });
 
-      //this.setState({crimes: this.state.crimes})
-
-      //var mapLayer = map.getLayer('crime-points');
-      //if (mapLayer){
-        //map.getSource('crime-points').setData({
-          //type: 'FeatureCollection',
-          //features: features
-        //});
-      //}
-      //else {
-        //map.addSource('crime-points', {
-          //type: 'geojson',
-          //data: {
-            //type: 'Feature',
-            //features: features
-          //}
-        //});
-
-        //map.addLayer({
-          //id: 'crime-points',
-          //type: 'circle',
-          //source: 'crime-points',
-          //paint: {
-            //"circle-radius": 6,
-            //"circle-color": "#B42222"
-          //}
-        //});
-      //}
-
-/*      console.log(this.state.crimes)*/
-    /*});*/
   };
 
   render() {
-    const { lng, lat, zoom } = this.state;
-
     return (
       <div>
-        <div className='inline-block absolute top left mt12 ml12 bg-darken75 color-white z1 py6 px12 round-full txt-s txt-bold'>
-          <div>{`Longitude: ${lng} Latitude: ${lat} Zoom: ${zoom}`}</div>
-        </div>
         <div id='map' ref={el => this.mapContainer = el} className='absolute top right left bottom' />
       </div>
     );
-  }
-}
+  };
+};
 
 ReactDOM.render(<Application />, document.getElementById('app'));

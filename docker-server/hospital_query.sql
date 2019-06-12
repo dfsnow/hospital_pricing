@@ -18,6 +18,8 @@ FROM (
                     LOWER($3)) DESC
                 ) AS rank_filter
             FROM prices
-            WHERE hospital_id IN (SELECT hospital_id FROM closest)) c
+            WHERE hospital_id IN (SELECT hospital_id FROM closest)
+            AND price IS NOT NULL
+            AND description IS NOT NULL) c
         WHERE rank_filter = 1) b
     ON a.hospital_id = b.hospital_id) result

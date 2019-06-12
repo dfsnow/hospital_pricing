@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Frontend map for queries",
   "scripts": {
-    "start": "PORT=8000 ./node_modules/.bin/react-scripts start"
+    "start": "PORT=8020 ./node_modules/.bin/react-scripts start"
   },
   "author": "Dan Snow",
   "license": "UNLICENSED",

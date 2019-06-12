@@ -19,7 +19,6 @@ const getHospitals = (request, response) => {
   let lon = request.query.lon
   let lat = request.query.lat
   let search = request.query.search
-  console.log(search)
   pool.query(hospitalQueryString, [lon, lat, search], (error, results) => {
     try {
       response.status(200).json(results.rows)
